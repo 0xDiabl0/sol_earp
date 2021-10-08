@@ -22,6 +22,19 @@ yarn start
 
 ```
 
+To run the local data server, follow these steps
+
+```bash
+
+cd sol_earp/apis
+
+```
+```bash
+
+node index.js
+
+```
+
 # Environment Setup
 1. Install Rust from https://rustup.rs/
 2. Install Solana v1.6.7 or later from https://docs.solana.com/cli/install-solana-cli-tools#use-solanas-install-tool
@@ -35,6 +48,8 @@ Run the following from the program/ subdirectory:
 $ cargo build-bpf
 $ cargo test-bpf
 ```
+After the smart contarct has compiled, deploy it on the chain. 
+
 # Directory structure
 
 ## program
