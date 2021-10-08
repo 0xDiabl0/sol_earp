@@ -1,5 +1,5 @@
-# 🏗 Solana App Scaffold
-Scaffolding for a dapp built on Solana
+# 🏗 Solana Early adopter Protocol
+Flagship app that will consume EARP. To be submitted in hackathon
 
 # Quickstart
 
