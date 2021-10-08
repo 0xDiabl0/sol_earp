@@ -8,6 +8,7 @@ git clone https://github.com/solana-labs/dapp-scaffold.git
 
 cd sol_earp
 ```
+If you have a package-lock.json file, please delete and proceed
 
 ```bash
 
