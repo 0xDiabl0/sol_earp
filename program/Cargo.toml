@@ -1,0 +1,26 @@
+[package]
+name = "bpf-program-ear"
+version = "0.1.0"
+edition = "2018"
+license = "WTFPL"
+publish = false
+authors = ["0xDiablo <oxdiablo.crypto@gmail.com>"]
+
+[dependencies]
+borsh = "0.9.1"
+borsh-derive = "0.9.1"
+solana-program = "=1.7.9"
+solana-validator = { version = "1.7.9", optional = true }
+
+[features]
+test-bpf = ["solana-validator"]
+no-entrypoint = []
+
+[dev-dependencies]
+assert_matches = "1.4.0"
+solana-program-test = "1.7.9"
+solana-sdk = "1.7.9"
+
+[lib]
+name = "ear"
+crate-type = ["cdylib", "lib"]
