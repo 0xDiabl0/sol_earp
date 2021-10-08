@@ -6,7 +6,7 @@ Flagship app that will consume EARP. To be submitted in hackathon
 ```bash
 git clone https://github.com/solana-labs/dapp-scaffold.git
 
-cd dapp-scaffold
+cd sol_earp
 ```
 
 ```bash
