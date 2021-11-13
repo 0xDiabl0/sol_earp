@@ -8,15 +8,33 @@ use solana_program::{
     pubkey::Pubkey,
 };
 use std::str;
-use std::vec::Vec;
+// use std::vec::Vec;
 
 /// Define the type of state stored in accounts
-#[derive(BorshSerialize, BorshDeserialize, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Debug
+)]
+
 pub struct GreetingAccount {
     /// number of greetings
     pub counter: u32,
-    pub buyers_addr: Vec<String> //Stores early adopter addresses
+    pub buyers_addr: String::with_capacity(500), //Stores early adopter addresses
 }
+
+// impl<T, const N: usize> BorshDeserialize for [T; N]
+// where
+//     T: Copy,
+// {
+//     #[inline]
+//     fn deserialize(buf: &mut &[u8]) -> Result<Self, u32> {
+//         let mut result = [T::default(); N];
+//         if N > 0 && !T::copy_from_bytes(buf, &mut result)? {
+//             for i in 0..N {
+//                 result[i] = T::deserialize(buf)?;
+//             }
+//         }
+//         Ok(result)
+//     }
+// }
 
 solana_program::declare_id!("BpfProgram1111111111111111111111111111111111");
 
@@ -50,20 +68,11 @@ pub fn process_instruction(
         return Err(ProgramError::IncorrectProgramId);
     }
 
-    
-    // msg!("Adata {}", &account.data.borrow());
+    //msg!("acc data:{:#?}",&account.data);
 
-    // Increment and store the number of times the account has been greeted
+    msg!("trying slice");
     let mut greeting_account = GreetingAccount::try_from_slice(&account.data.borrow())?;
-    greeting_account.counter += 1;
-
-    msg!("count:{}", greeting_account.counter);
-    // msg!(instruction_data);
-
-    msg!("iterating");
-    for i in &greeting_account.buyers_addr {
-        msg!("{}", i);
-    }
+    msg!("trying from utf8");
 
     let buyer_addr = str::from_utf8(instruction_data).map_err(|err| {
         msg!("Invalid UTF-8, from byte {}", err.valid_up_to());
@@ -71,28 +80,41 @@ pub fn process_instruction(
     })?;
 
     msg!(buyer_addr);
-
+    msg!("trying to string");
     let add_str = buyer_addr.to_string();
-
     msg!("&str: {}" ,&add_str);
 
-    if (greeting_account.counter < 2) {
-        //greeting_account.buyers_addr[greeting_account.counter] = buyer_addr;
-        greeting_account.buyers_addr.push(buyer_addr.to_string());
-        msg!("iterating");
-        for i in &greeting_account.buyers_addr {
-            msg!("{}", i);
+    if (greeting_account.counter < 4) {
+
+        msg!("inside threshold");
+
+        let mut new_str:String = add_str.to_owned();;
+        //let mut new_str:String = "";
+        
+        if (greeting_account.counter > 0) {
+
+            msg!("trying pool");
+            
+            greeting_account.buyers_addr = greeting_account.buyers_addr + &"_".to_owned();
         }
-        msg!("Pooling the rewards");
+
+        msg!("adding strings");
+        greeting_account.buyers_addr = greeting_account.buyers_addr + &new_str;
+
+        msg!("Pooling the rewards :{}", greeting_account.buyers_addr);
     } 
     else {
+
         msg!("Hit the limit {}. Reward disbursal next", greeting_account.counter);
     }
+
+    //handling counter
+    greeting_account.counter += 1;
+    msg!("count:{}", greeting_account.counter);
 
     greeting_account.serialize(&mut &mut account.data.borrow_mut()[..])?;
 
     msg!("Bought {} time(s)!", greeting_account.counter);
-
 
     Ok(())
 }

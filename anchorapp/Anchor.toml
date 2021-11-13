@@ -1,0 +1,12 @@
+[programs.localnet]
+anchorapp = "2dAyw3yM8u3r28VrTzUndQdv4AzbZcAUmuRjLZt9frzj"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "localnet"
+wallet = "/Users/ashu/.config/solana/id.json"
+
+[scripts]
+test = "mocha -t 1000000 tests/"

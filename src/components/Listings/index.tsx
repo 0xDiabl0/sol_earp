@@ -26,7 +26,7 @@ export interface WalletAdapter extends EventEmitter {
 //export const Listings = (props: { left?: JSX.Element; right?: JSX.Element }) => {
 export const Listings = (props: { price: number; destAddress: string }) => {
 
-  console.log(props);
+  // console.log(props);
 
   const connection = useConnection();
   // const { publicKey } = useWallet();
@@ -73,9 +73,9 @@ export const Listings = (props: { price: number; destAddress: string }) => {
       transaction.recentBlockhash = hash.blockhash;
 
       let signedTransaction = await wallet.signTransaction(transaction);
-      //let sig = await connection.sendRawTransaction(signedTransaction.serialize());
+      let sig = await connection.sendRawTransaction(signedTransaction.serialize());
 
-      if (true) { //(sig.length>0) {
+      if (sig.length>0) {
         console.log("payment successful");
 
         //   /**
@@ -87,7 +87,7 @@ export const Listings = (props: { price: number; destAddress: string }) => {
         //    */
           
         //This timeout of 5sec is a hack to achive finality of transactions before distributing.
-        let timeout = setTimeout(() => invokeSmartContract(props.destAddress, props.price, buf), 5000);
+        let timeout = setTimeout(() => invokeSmartContract(props.destAddress, props.price, buf, wallet), 5000);
         
         notify({
           message: LABELS.SUCCESSFUL_PURCHASE,

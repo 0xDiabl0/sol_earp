@@ -1,4 +1,11 @@
 import { useCallback, useState } from "react";
+import { BN, Idl, Program, Provider, Wallet, web3 } from '@project-serum/anchor';
+import idl from '../../src/idl.json';
+
+// import { getPhantomWallet } from '@solana/wallet-adapter-wallets';
+import { useWallet, WalletContextState, WalletProvider } from '@solana/wallet-adapter-react';
+// import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+
 import {
   Keypair,
   Connection,
@@ -8,6 +15,8 @@ import {
   TransactionInstruction,
   Transaction,
   sendAndConfirmTransaction,
+  Commitment,
+  ConfirmOptions,
 } from '@solana/web3.js';
 
 import fs from 'mz/fs';
@@ -18,9 +27,26 @@ import os from 'os';
 import yaml from 'yaml';
 
 import Async from 'react-async';
+import { NodeWallet } from "@project-serum/anchor/dist/cjs/provider";
 
+
+// const wallets = [ getPhantomWallet() ]
+
+// const { SystemProgram, Keypair } = web3;
+// const baseAccount = Keypair.generate();
+
+let processedCommitment : Commitment;
+processedCommitment = "processed";
+
+let opts : ConfirmOptions;
+opts = {
+  preflightCommitment: processedCommitment
+}
+
+//const userwallet = useWallet();
+
+const programID = new PublicKey(idl.metadata.address);
   
-// import fs from 'fs';
 
 /**
  * Connection to the network
@@ -62,6 +88,8 @@ import Async from 'react-async';
   * The public key of the account we are saying hello to
   */
  let greetedPubkey: PublicKey;
+ let greetedPubSeed: [buffer];
+ let greetedPubBump: int;
  
  const EARP_TREASURY_PUBLIC_KEY = new PublicKey('FMBYVso8AFstfQidypqc6KVA5fPo6Yx6wjQdze2LL3uH');
  const BUSINESS_PUBLIC_KEY = new PublicKey('ABUdsXe6hAAz8J8raXpsuicwkyFJyZ6CHvccb6MpXDDh');
@@ -69,7 +97,7 @@ import Async from 'react-async';
  /**
   * Path to program files
   */
- const PROGRAM_PATH = path.resolve(__dirname, '../../dist/program');
+//  const PROGRAM_PATH = path.resolve(__dirname, '../../dist/program');
  
  /**
   * Path to localnet keypair files
@@ -82,22 +110,22 @@ import Async from 'react-async';
   *   - `npm run build:program-c`
   *   - `npm run build:program-rust`
   */
- const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'helloworld.so');
+//  const PROGRAM_SO_PATH = path.join(PROGRAM_PATH, 'helloworld.so');
  
  /**
   * Path to the keypair of the deployed program.
   * This file is created when running `solana program deploy dist/program/helloworld.so`
   */
- const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'helloworld-keypair.json');
+//  const PROGRAM_KEYPAIR_PATH = path.join(PROGRAM_PATH, 'helloworld-keypair.json');
  
  /**
   * Path to the keypair of the deployed program.
-  * This file is created when running `solana program deploy dist/program/helloworld.so`
+  * This file is created when running `anchor deploy in /anchorapp folder`
   */
   const RX_KEYPAIR_PATH = path.join(KEYPAIR_PATH, 'test1.json');
 
-  const PROGRAM_NAME = 'ear.so';
-  const PROGRAM_KEYPAIR = 'ear-keypair.json';
+  const PROGRAM_NAME = 'anchorapp.so';
+  const PROGRAM_KEYPAIR = 'anchorapp-keypair.json';
 
 
 /**
@@ -105,8 +133,8 @@ import Async from 'react-async';
  */
 class RewardAccount {
   counter = 0;  
-  buyers_addr : Array<String> = [];
-    constructor(fields: {counter: number, buyers_addr: String[]} | undefined = undefined) {
+  buyers_addr : String = "0".repeat(500);
+    constructor(fields: {counter: number, buyers_addr: String} | undefined = undefined) {
       if (fields) {
         this.counter = fields.counter;
         this.buyers_addr = fields.buyers_addr;
@@ -122,7 +150,7 @@ class RewardAccount {
       kind: 'struct', 
       fields: [ 
         ['counter', 'u32'], 
-        ['buyers_addr',['&str; 100']] 
+        ['buyers_addr', 'String'] 
       ] 
     } ],
   ]);
@@ -145,7 +173,7 @@ class RewardAccount {
  * b) Increment the purchase counter in tracker account (owned by EAR), Retrieve the latest count
  * c) Check the disbursal criteria and distribite rewards amount among early-adopters
  */
-export async function invokeSmartContract(destAddress : String, price : number, buyerAddress : Buffer) {
+export async function invokeSmartContract(destAddress : String, price : number, buyerAddress : Buffer, wallet : WalletContextState) {
 
   console.log("invoking smart contract now. YAY!!");
 
@@ -153,22 +181,18 @@ export async function invokeSmartContract(destAddress : String, price : number, 
   await establishConnection();
 
   //Transfer Sol from listing account to Rewards, Biz and Treasury
-  await transferSolFromListing(destAddress, price);
-
-  
-
+  //await transferSolFromListing(destAddress, price);
 
   // // Determine who pays for the fees
   // await establishPayer();
 
+  console.log("reward acc data size :"+ REWARD_ACCOUNT_SIZE);
+
   // // Check if the program has been deployed
-  await checkProgram();
+  await checkProgram(wallet);
 
   //Increment purchase via smart contract
-  await recordPurchase(buyerAddress);
-
-  // // Say hello to an account
-  // await sayHello();
+  //await recordPurchase(buyerAddress);
 
   // Find out how many times that account has been greeted
   //await reportPurchases();
@@ -207,6 +231,7 @@ export async function invokeSmartContract(destAddress : String, price : number, 
  * Record Purchase
  */
  export async function recordPurchase(buyer_addr : Buffer): Promise<void> {
+
   console.log('Recording purchase to', greetedPubkey.toBase58());
   // let addstr = buyer_addr.toString();
   const instruction = new TransactionInstruction({
@@ -219,6 +244,7 @@ export async function invokeSmartContract(destAddress : String, price : number, 
     new Transaction().add(instruction),
     [listingKeypair],//[payer],
   );
+
 }
 
 
@@ -289,13 +315,13 @@ export async function transferSolFromListing(listingAddress : String, listingPri
   transactions.add(instruction2);
   transactions.add(instruction3);
 
-  // const signature = await sendAndConfirmTransaction(
-  //   connection,
-  //   transactions,
-  //   [listingKeypair],
-  // );
+  const signature = await sendAndConfirmTransaction(
+    connection,
+    transactions,
+    [listingKeypair],
+  );
 
-  // console.log("transfer signature :"+signature);
+  console.log("transfer signature :"+signature);
   console.log("listing lamports at end:"+ listingAccountInfo?.lamports);
   
 }
@@ -387,66 +413,168 @@ const loadKeyString = (file : string, path: string) => fetch(`/key-string?f=${en
 /**
  * Check if the hello world BPF program has been deployed
  */
-export async function checkProgram(): Promise<void> {
+export async function checkProgram(wallet : WalletContextState): Promise<void> {
   
   // Read program id from keypair file
-  try {
-    programKeypair = await createKeypairFromFile(PROGRAM_KEYPAIR, 'program');
-    programId = programKeypair.publicKey;
-  } catch (err) {
-    const errMsg = (err as Error).message;
-    throw new Error(
-      `Failed to read program keypair at due to error: ${errMsg}. Program may need to be deployed with \`solana program deploy sol_ear.so\``,
-    );
-  }
+  // try {
+  //   programKeypair = await createKeypairFromFile(PROGRAM_KEYPAIR, 'program');
+  //   programId = programKeypair.publicKey;
+  // } catch (err) {
+  //   const errMsg = (err as Error).message;
+  //   throw new Error(
+  //     `Failed to read program keypair at due to error: ${errMsg}. Program may need to be deployed with \`solana program deploy sol_ear.so\``,
+  //   );
+  // }
+
+  //programId = new PublicKey(idl.metadata.address);
 
   // Check if the program has been deployed
-  const programInfo = await connection.getAccountInfo(programId);
+  const programInfo = await connection.getAccountInfo(programID);
   if (programInfo === null) {
-    // if (fs.existsSync(PROGRAM_SO_PATH)) {
-    //   throw new Error(
-    //     'Program needs to be deployed with `solana program deploy dist/program/helloworld.so`',
-    //   );
-    // } else {
-    throw new Error('Program needs to be built and deployed');
-    // }
+    throw new Error(
+      'Program needs to be built and deployed with `anchor build && anchor deploy',
+    );
   } else if (!programInfo.executable) {
-    throw new Error(`Program is not executable`);
+      throw new Error(`Program is not executable`);
   }
 
-  console.log(`Using program ${programId.toBase58()}`);
+  console.log(`Using program ${programID.toBase58()}`);
 
   // Derive the address (public key) of a greeting account from the program so that it's easy to find later.
-  const GREETING_SEED = 'registry';
-  greetedPubkey = await PublicKey.createWithSeed(
-    listingKeypair.publicKey,
-    GREETING_SEED,
-    programId,
-  );
+  // const GREETING_SEED = 'registry1';
+  // greetedPubkey = await PublicKey.createWithSeed(
+  //   listingKeypair.publicKey,
+  //   GREETING_SEED,
+  //   programId,
+  // );
+
+  console.log("will find PDA");
+  let publicKeyStr = listingKeypair.publicKey.toBase58().substr(0,32);
+  greetedPubSeed = [Buffer.from(publicKeyStr, 'utf8')];
+
+  console.log("seedbump:"+greetedPubSeed);
+
+  var greetedPubPDA = await PublicKey.findProgramAddress(greetedPubSeed, programID);
+  console.log("got pda:"+greetedPubPDA);
+  greetedPubkey = greetedPubPDA[0];
+  greetedPubBump = greetedPubPDA[1]; 
+  console.log("got pda key:"+greetedPubkey);
 
   // Check if the greeting account has already been created
   const greetedAccount = await connection.getAccountInfo(greetedPubkey);
   if (greetedAccount === null) {
-    console.log(
-      'Creating account',
-      greetedPubkey.toBase58(),
-      'to say hello to',
-    );
-    const lamports = await connection.getMinimumBalanceForRentExemption(
-      REWARD_ACCOUNT_SIZE,
-    );
 
-    const transaction = new Transaction().add(
-      SystemProgram.createAccountWithSeed({
-        fromPubkey: listingKeypair.publicKey,
-        basePubkey: listingKeypair.publicKey,
-        seed: GREETING_SEED,
-        newAccountPubkey: greetedPubkey,
-        lamports,
-        space: REWARD_ACCOUNT_SIZE,
-        programId,
-      }),
-    );
-    await sendAndConfirmTransaction(connection, transaction, [listingKeypair]);
+    console.log('Creating account',greetedPubkey.toBase58(),'to say hello to',);
+
+    // const lamports = await connection.getMinimumBalanceForRentExemption(
+    //   REWARD_ACCOUNT_SIZE,
+    // );
+
+    // const transaction = new Transaction().add(
+    //   SystemProgram.createAccountWithSeed({
+    //     fromPubkey: listingKeypair.publicKey,
+    //     basePubkey: listingKeypair.publicKey,
+    //     seed: GREETING_SEED,
+    //     newAccountPubkey: greetedPubkey,
+    //     lamports,
+    //     space: REWARD_ACCOUNT_SIZE,
+    //     programId,
+    //   }),
+    // );
+    // await sendAndConfirmTransaction(connection, transaction, [listingKeypair]);
+
+    await anchorInitialize(greetedPubkey, wallet);
+
+    console.log("back from initialize");
+
+  }
+
+}
+
+async function getProvider(wallet : WalletContextState){
+  
+  const network = "http://127.0.0.1:8899";
+  const connection = new Connection(network, "processed");
+
+  // const userwallet = useWallet();
+  let wallet1 = new tWallet(wallet);
+
+  if (!opts.preflightCommitment)
+    throw new Error("empty preflight commitment");
+
+  const provider = new Provider(connection, wallet1, opts);
+
+  return provider;
+}
+
+
+async function anchorInitialize(greetedPubkey: web3.PublicKey, wallet: WalletContextState) {
+  
+  const provider = await getProvider(wallet);
+  // const userwallet = useWallet();
+
+  const idlObj = idl as Idl; //JSON.parse(idl.toString()) as Idl;
+  let wallet1 = new tWallet(wallet);
+
+  /* create the program interface combining the idl, program ID, and provider */
+
+  const program = new Program(idlObj, programID, provider);
+
+  try {
+
+    /* interact with the program via rpc */
+    await program.rpc.initialize(greetedPubSeed, {
+      accounts: {
+        baseAccount: greetedPubkey,
+        user: provider.wallet.publicKey,
+        systemProgram: SystemProgram.programId,
+      },
+     //signers: [programKeypair]
+    });
+
+    const account = await program.account.baseAccount.fetch(greetedPubkey);
+    console.log('account: ', account);
+    // setValue(account.data.toString());
+    // setDataList(account.dataList);
+
+  } catch (err) {
+    console.log("Initialize Transaction error: ", err);
+  }
+
+}
+
+// const userwallet = useWallet();
+const kp = new Keypair();
+
+export class tWallet extends NodeWallet {
+  
+  public userwallet : WalletContextState;
+
+  // constructor(readonly payer: Keypair) {}
+  constructor(wallet : WalletContextState) {
+    super(kp);
+    this.userwallet = wallet;
+  }
+
+
+  async signTransaction(tx: Transaction): Promise<Transaction> {
+    
+    return this.userwallet.signTransaction(tx);
+  }
+
+  async signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
+    
+    return this.userwallet.signAllTransactions(txs);
+  }
+
+  get publicKey(): PublicKey {
+    
+    let pk = this.userwallet.publicKey;
+    if (!pk)
+      throw new Error("public key is null");
+
+    return pk;
   }
 }
+
+
