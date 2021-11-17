@@ -88,8 +88,8 @@ const programID = new PublicKey(idl.metadata.address);
   * The public key of the account we are saying hello to
   */
  let greetedPubkey: PublicKey;
- let greetedPubSeed: [buffer];
- let greetedPubBump: int;
+ let greetedPubSeed: Buffer;
+//  let greetedPubBump: int;
  
  const EARP_TREASURY_PUBLIC_KEY = new PublicKey('FMBYVso8AFstfQidypqc6KVA5fPo6Yx6wjQdze2LL3uH');
  const BUSINESS_PUBLIC_KEY = new PublicKey('ABUdsXe6hAAz8J8raXpsuicwkyFJyZ6CHvccb6MpXDDh');
@@ -181,7 +181,7 @@ export async function invokeSmartContract(destAddress : String, price : number, 
   await establishConnection();
 
   //Transfer Sol from listing account to Rewards, Biz and Treasury
-  //await transferSolFromListing(destAddress, price);
+  await transferSolFromListing(destAddress, price);
 
   // // Determine who pays for the fees
   // await establishPayer();
@@ -449,15 +449,20 @@ export async function checkProgram(wallet : WalletContextState): Promise<void> {
   // );
 
   console.log("will find PDA");
-  let publicKeyStr = listingKeypair.publicKey.toBase58().substr(0,32);
-  greetedPubSeed = [Buffer.from(publicKeyStr, 'utf8')];
+  // let publicKeyStr = listingKeypair.publicKey.toBase58().substr(0,32);
+  // console.log("str:"+publicKeyStr);
+  // greetedPubSeed = Buffer.from(publicKeyStr, 'utf8');
 
-  console.log("seedbump:"+greetedPubSeed);
+  greetedPubSeed = Buffer.from("registry", 'utf8');
+  // console.log("bufstr:"+bufstr);
+  // // greetedPubSeed[0] = bufstr;
 
-  var greetedPubPDA = await PublicKey.findProgramAddress(greetedPubSeed, programID);
+  // console.log("seedbump:"+greetedPubSeed[0]);
+
+  var greetedPubPDA = await PublicKey.findProgramAddress([greetedPubSeed], programID);
   console.log("got pda:"+greetedPubPDA);
   greetedPubkey = greetedPubPDA[0];
-  greetedPubBump = greetedPubPDA[1]; 
+  let greetedPubBump = greetedPubPDA[1]; 
   console.log("got pda key:"+greetedPubkey);
 
   // Check if the greeting account has already been created
@@ -483,7 +488,7 @@ export async function checkProgram(wallet : WalletContextState): Promise<void> {
     // );
     // await sendAndConfirmTransaction(connection, transaction, [listingKeypair]);
 
-    await anchorInitialize(greetedPubkey, wallet);
+    await anchorInitialize(greetedPubkey, greetedPubBump, wallet);
 
     console.log("back from initialize");
 
@@ -508,10 +513,9 @@ async function getProvider(wallet : WalletContextState){
 }
 
 
-async function anchorInitialize(greetedPubkey: web3.PublicKey, wallet: WalletContextState) {
+async function anchorInitialize(greetedPubkey: web3.PublicKey, greetedPubBump:number, wallet: WalletContextState) {
   
   const provider = await getProvider(wallet);
-  // const userwallet = useWallet();
 
   const idlObj = idl as Idl; //JSON.parse(idl.toString()) as Idl;
   let wallet1 = new tWallet(wallet);
@@ -522,14 +526,17 @@ async function anchorInitialize(greetedPubkey: web3.PublicKey, wallet: WalletCon
 
   try {
 
+    //TOTO : Need to fix the is_writable to false for PDA (Ashutosh)
     /* interact with the program via rpc */
-    await program.rpc.initialize(greetedPubSeed, {
+    await program.rpc.initialize(greetedPubBump, {
       accounts: {
         baseAccount: greetedPubkey,
         user: provider.wallet.publicKey,
         systemProgram: SystemProgram.programId,
+
       },
      //signers: [programKeypair]
+     
     });
 
     const account = await program.account.baseAccount.fetch(greetedPubkey);
