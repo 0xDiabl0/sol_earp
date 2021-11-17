@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { BN, Idl, Program, Provider, Wallet, web3 } from '@project-serum/anchor';
 import idl from '../../src/idl.json';
+import {getProvider, tWallet} from '../utils/anchorUtils';
 
 // import { getPhantomWallet } from '@solana/wallet-adapter-wallets';
 import { useWallet, WalletContextState, WalletProvider } from '@solana/wallet-adapter-react';
@@ -414,19 +415,7 @@ const loadKeyString = (file : string, path: string) => fetch(`/key-string?f=${en
  * Check if the hello world BPF program has been deployed
  */
 export async function checkProgram(wallet : WalletContextState): Promise<void> {
-  
-  // Read program id from keypair file
-  // try {
-  //   programKeypair = await createKeypairFromFile(PROGRAM_KEYPAIR, 'program');
-  //   programId = programKeypair.publicKey;
-  // } catch (err) {
-  //   const errMsg = (err as Error).message;
-  //   throw new Error(
-  //     `Failed to read program keypair at due to error: ${errMsg}. Program may need to be deployed with \`solana program deploy sol_ear.so\``,
-  //   );
-  // }
 
-  //programId = new PublicKey(idl.metadata.address);
 
   // Check if the program has been deployed
   const programInfo = await connection.getAccountInfo(programID);
@@ -440,13 +429,6 @@ export async function checkProgram(wallet : WalletContextState): Promise<void> {
 
   console.log(`Using program ${programID.toBase58()}`);
 
-  // Derive the address (public key) of a greeting account from the program so that it's easy to find later.
-  // const GREETING_SEED = 'registry1';
-  // greetedPubkey = await PublicKey.createWithSeed(
-  //   listingKeypair.publicKey,
-  //   GREETING_SEED,
-  //   programId,
-  // );
 
   console.log("will find PDA");
   // let publicKeyStr = listingKeypair.publicKey.toBase58().substr(0,32);
@@ -471,23 +453,6 @@ export async function checkProgram(wallet : WalletContextState): Promise<void> {
 
     console.log('Creating account',greetedPubkey.toBase58(),'to say hello to',);
 
-    // const lamports = await connection.getMinimumBalanceForRentExemption(
-    //   REWARD_ACCOUNT_SIZE,
-    // );
-
-    // const transaction = new Transaction().add(
-    //   SystemProgram.createAccountWithSeed({
-    //     fromPubkey: listingKeypair.publicKey,
-    //     basePubkey: listingKeypair.publicKey,
-    //     seed: GREETING_SEED,
-    //     newAccountPubkey: greetedPubkey,
-    //     lamports,
-    //     space: REWARD_ACCOUNT_SIZE,
-    //     programId,
-    //   }),
-    // );
-    // await sendAndConfirmTransaction(connection, transaction, [listingKeypair]);
-
     await anchorInitialize(greetedPubkey, greetedPubBump, wallet);
 
     console.log("back from initialize");
@@ -496,26 +461,10 @@ export async function checkProgram(wallet : WalletContextState): Promise<void> {
 
 }
 
-async function getProvider(wallet : WalletContextState){
-  
-  const network = "http://127.0.0.1:8899";
-  const connection = new Connection(network, "processed");
-
-  // const userwallet = useWallet();
-  let wallet1 = new tWallet(wallet);
-
-  if (!opts.preflightCommitment)
-    throw new Error("empty preflight commitment");
-
-  const provider = new Provider(connection, wallet1, opts);
-
-  return provider;
-}
-
 
 async function anchorInitialize(greetedPubkey: web3.PublicKey, greetedPubBump:number, wallet: WalletContextState) {
   
-  const provider = await getProvider(wallet);
+  const provider = await getProvider(wallet); //getProvider(wallet);
 
   const idlObj = idl as Idl; //JSON.parse(idl.toString()) as Idl;
   let wallet1 = new tWallet(wallet);
@@ -549,39 +498,3 @@ async function anchorInitialize(greetedPubkey: web3.PublicKey, greetedPubBump:nu
   }
 
 }
-
-// const userwallet = useWallet();
-const kp = new Keypair();
-
-export class tWallet extends NodeWallet {
-  
-  public userwallet : WalletContextState;
-
-  // constructor(readonly payer: Keypair) {}
-  constructor(wallet : WalletContextState) {
-    super(kp);
-    this.userwallet = wallet;
-  }
-
-
-  async signTransaction(tx: Transaction): Promise<Transaction> {
-    
-    return this.userwallet.signTransaction(tx);
-  }
-
-  async signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
-    
-    return this.userwallet.signAllTransactions(txs);
-  }
-
-  get publicKey(): PublicKey {
-    
-    let pk = this.userwallet.publicKey;
-    if (!pk)
-      throw new Error("public key is null");
-
-    return pk;
-  }
-}
-
-
