@@ -24,6 +24,30 @@ opts = {
 }
 
 
+/**
+ * Returns the PDA details for a given listing
+ * @param listingKeypair 
+ * @returns 
+ */
+export async function getPDAfromListing(listingKeypair : Keypair, programId : PublicKey) {
+  
+  let accountPDA;
+
+  if (!listingKeypair) 
+    throw new Error("listing keypair is null");
+
+  // let publicKeyStr = listingKeypair.publicKey.toBase58().substr(0,32);
+  // let greetedPubSeed = Buffer.from(publicKeyStr, 'utf8');
+
+  //HARD CODED PDA seed for now. should ideally be derived from listing key
+  let greetedPubSeed = Buffer.from("registry", 'utf8');
+  
+  accountPDA = await PublicKey.findProgramAddress([greetedPubSeed], programId);
+
+  return accountPDA;
+}
+
+
 export async function getProvider(wallet : WalletContextState){
   
   const network = "http://127.0.0.1:8899";
