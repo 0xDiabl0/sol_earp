@@ -5,11 +5,11 @@ import {
   Keypair,
   Connection,
   PublicKey,
-  LAMPORTS_PER_SOL,
-  SystemProgram,
-  TransactionInstruction,
+  // LAMPORTS_PER_SOL,
+  // SystemProgram,
+  // TransactionInstruction,
   Transaction,
-  sendAndConfirmTransaction,
+  // sendAndConfirmTransaction,
   Commitment,
   ConfirmOptions,
 } from '@solana/web3.js';
@@ -75,18 +75,35 @@ export class tWallet extends NodeWallet {
   // constructor(readonly payer: Keypair) {}
   constructor(wallet : WalletContextState) {
     super(kp);
+
+    if (!wallet)
+      throw new Error("wallet undefined..");
+    
     this.userwallet = wallet;
+
+    if (!this.userwallet)
+      throw new Error("wallet undefined..");
   }
 
 
   async signTransaction(tx: Transaction): Promise<Transaction> {
     
-    return this.userwallet.signTransaction(tx);
+    let x = tx;
+
+    if (this.userwallet.signTransaction)
+      return this.userwallet.signTransaction(tx);
+
+    return x;
   }
 
   async signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
     
-    return this.userwallet.signAllTransactions(txs);
+    let x = txs;
+    
+    if (this.userwallet.signAllTransactions)
+      return this.userwallet.signAllTransactions(txs);
+
+    return x;
   }
 
   get publicKey(): PublicKey {

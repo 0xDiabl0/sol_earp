@@ -1,10 +1,18 @@
-import { useCallback, useState } from "react";
-import { BN, Idl, Program, Provider, Wallet, web3 } from '@project-serum/anchor';
+// import { useCallback, useState } from "react";
+import { 
+  // BN, 
+  Idl, Program, 
+  // Provider, Wallet, 
+  web3 } from '@project-serum/anchor';
 import idl from '../../src/idl.json';
 import {getPDAfromListing, getProvider, tWallet} from '../utils/anchorUtils';
 
 // import { getPhantomWallet } from '@solana/wallet-adapter-wallets';
-import { useWallet, WalletContextState, WalletProvider } from '@solana/wallet-adapter-react';
+import { 
+  // useWallet, 
+  WalletContextState, 
+  // WalletProvider 
+} from '@solana/wallet-adapter-react';
 // import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 import {
@@ -13,7 +21,7 @@ import {
   PublicKey,
   LAMPORTS_PER_SOL,
   SystemProgram,
-  TransactionInstruction,
+  // TransactionInstruction,
   Transaction,
   sendAndConfirmTransaction,
   Commitment,
@@ -27,8 +35,8 @@ import * as borsh from 'borsh';
 import os from 'os';
 import yaml from 'yaml';
 
-import Async from 'react-async';
-import { NodeWallet } from "@project-serum/anchor/dist/cjs/provider";
+// import Async from 'react-async';
+// import { NodeWallet } from "@project-serum/anchor/dist/cjs/provider";
 
 
 // const wallets = [ getPhantomWallet() ]
@@ -45,6 +53,7 @@ opts = {
 }
 
 //const userwallet = useWallet();
+
 
 const programID = new PublicKey(idl.metadata.address);
   

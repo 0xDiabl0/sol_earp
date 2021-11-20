@@ -1,17 +1,21 @@
 import React, { useCallback } from "react";
-import { useConnection, sendTransaction } from "../../contexts/connection";
+import { useConnection, 
+  // sendTransaction 
+} from "../../contexts/connection";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL, Connection,
+import { LAMPORTS_PER_SOL,
+  // Connection,
   SystemProgram,
   Transaction,
   PublicKey,
-  TransactionInstruction, } from "@solana/web3.js";
+  // TransactionInstruction, 
+} from "@solana/web3.js";
 import { notify } from "../../utils/notifications";
 import { LABELS } from "../../constants";
-import Wallet from "@project-serum/sol-wallet-adapter";
+// import Wallet from "@project-serum/sol-wallet-adapter";
 
 import { Button, Col, Row } from "antd";
-import { publicKey } from "../../utils/layout";
+// import { publicKey } from "../../utils/layout";
 import EventEmitter from "eventemitter3";
 import { invokeSmartContract } from "../../utils/programBridge";
 
@@ -31,7 +35,7 @@ export const Listings = (props: { price: number; destAddress: string }) => {
   const connection = useConnection();
   // const { publicKey } = useWallet();
   const wallet = useWallet();
-
+  
   const purchaseListing = useCallback(async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       
     e.preventDefault();
@@ -39,6 +43,10 @@ export const Listings = (props: { price: number; destAddress: string }) => {
     let publicKey = wallet.publicKey;
 
     try {
+
+      if (!wallet) 
+        throw new Error("wallet null");
+
         
       if (!publicKey) {
         return;
@@ -49,7 +57,6 @@ export const Listings = (props: { price: number; destAddress: string }) => {
 
       console.log("key is here:"+publicKeyStr);
 
-      //await connection.requestAirdrop(publicKey, 2 * LAMPORTS_PER_SOL);
 
       notify({
         message: LABELS.WALLET_APPROVE_PROMPT,
@@ -72,10 +79,12 @@ export const Listings = (props: { price: number; destAddress: string }) => {
       console.log("blockhash", hash);
       transaction.recentBlockhash = hash.blockhash;
 
-      let signedTransaction = await wallet.signTransaction(transaction);
-      let sig = await connection.sendRawTransaction(signedTransaction.serialize());
+      let signedTransaction = await wallet.signTransaction?.(transaction);
+      let sig;
+      if (signedTransaction)
+        sig = await connection.sendRawTransaction(signedTransaction.serialize());
 
-      if (sig.length>0) {
+      if (sig && sig.length>0) {
         console.log("payment successful");
 
         //   /**
