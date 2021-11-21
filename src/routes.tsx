@@ -16,6 +16,8 @@ import {
   getSolongWallet,
   getTorusWallet,
 } from "@solana/wallet-adapter-wallets";
+import { BuyerView } from "./views/buyer";
+import { SellerView } from "./views/seller";
 
 export function Routes() {
   const wallets = useMemo(
@@ -46,8 +48,10 @@ export function Routes() {
               <AppLayout>
                 <Switch>
                   <Route exact path="/" component={() => <HomeView />} />
+                  <Route exact path="/buyer" component={() => <BuyerView />} />
+                  <Route exact path="/seller" component={() => <SellerView />} />
                   <Route exact path="/faucet" children={<FaucetView />} />
-                  <Route exact path="/anchortest" children={<AnchortestView />} />
+                  {/* <Route exact path="/anchortest" children={<AnchortestView />} /> */}
                 </Switch>
               </AppLayout>
             </MarketProvider>
