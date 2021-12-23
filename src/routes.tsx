@@ -6,7 +6,7 @@ import { AccountsProvider } from "./contexts/accounts";
 import { MarketProvider } from "./contexts/market";
 import { AppLayout } from "./components/Layout";
 
-import { FaucetView, HomeView, AnchortestView } from "./views";
+import { FaucetView, HomeView } from "./views";
 import {
   getLedgerWallet,
   getMathWallet,
