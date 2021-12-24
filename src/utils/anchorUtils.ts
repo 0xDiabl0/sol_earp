@@ -14,6 +14,7 @@ import {
   ConfirmOptions,
 } from '@solana/web3.js';
 
+import idl from '../../src/idl.json';
 
 let processedCommitment : Commitment;
 processedCommitment = "processed";
@@ -50,7 +51,7 @@ export async function getPDAfromListing(listingKeypair : Keypair, programId : Pu
 
 export async function getProvider(wallet : WalletContextState){
   
-  const network = "http://127.0.0.1:8899";
+  const network = idl.metadata.rpc_url;
   const connection = new Connection(network, "processed");
 
   // const userwallet = useWallet();

@@ -66,6 +66,9 @@
     }
   ],
   "metadata": {
-    "address": "2dAyw3yM8u3r28VrTzUndQdv4AzbZcAUmuRjLZt9frzj"
+    "address": "2wvgLFRzyCj7hgGK194omXopF5g9C5JzFYo4fLgpocsY",
+    "rpc_url":"https://api.devnet.solana.com",
+    "ear_treasury_pubkey":"5aPzNtVohMLCRowpkay7i9zRaWHff3UjkDBGLmy9J92f",
+    "biz_pubkey":"6bJWmm8j6uEVjwEvMEKm7GY7oTJ6arULabALgRvo6ZiY"
   }
 }

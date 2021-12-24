@@ -15,27 +15,27 @@ import { Listings } from "../../components/Listings";
 
 export const HomeView = () => {
 
-  const { marketEmitter, midPriceInUSD } = useMarkets();
-  const { tokenMap } = useConnectionConfig();
-  const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
-  const SRM = useUserBalance(SRM_ADDRESS);
-  const SOL = useUserBalance(WRAPPED_SOL_MINT);
-  const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
+  // const { marketEmitter, midPriceInUSD } = useMarkets();
+  // const { tokenMap } = useConnectionConfig();
+  // const SRM_ADDRESS = "SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt";
+  // const SRM = useUserBalance(SRM_ADDRESS);
+  // const SOL = useUserBalance(WRAPPED_SOL_MINT);
+  // const { balanceInUSD: totalBalanceInUSD } = useUserTotalBalance();
   const { connected } = useWallet();
     
-  useEffect(() => {
-    const refreshTotal = () => {};
+  // useEffect(() => {
+  //   const refreshTotal = () => {};
 
-    const dispose = marketEmitter.onMarket(() => {
-      refreshTotal();
-    });
+  //   const dispose = marketEmitter.onMarket(() => {
+  //     refreshTotal();
+  //   });
 
-    refreshTotal();
+  //   refreshTotal();
 
-    return () => {
-      dispose();
-    };
-  }, [marketEmitter, midPriceInUSD, tokenMap]);
+  //   return () => {
+  //     dispose();
+  //   };
+  // }, [marketEmitter, midPriceInUSD, tokenMap]);
 
   return (
 
@@ -57,7 +57,7 @@ export const HomeView = () => {
     <Row gutter={[16, 16]} align="middle">
       <Col span={24}>
         <h1>Welcome to 'Beta (β) shoppe' : Flagship dApp of EAR Protocol </h1>
-        <i>Browse through the listings below and Buy from our carefully chosen collection to reap rewards for life-time.</i>
+        <i>We will make Use-To-Earn mainstream.</i>
       </Col>
     </Row>
 

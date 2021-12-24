@@ -56,6 +56,7 @@ opts = {
 
 
 const programID = new PublicKey(idl.metadata.address);
+const rpcUrl = idl.metadata.rpc_url;
   
 
 /**
@@ -102,8 +103,8 @@ const programID = new PublicKey(idl.metadata.address);
  let greetedPubPDA;
 //  let greetedPubBump: int;
  
- const EARP_TREASURY_PUBLIC_KEY = new PublicKey('FMBYVso8AFstfQidypqc6KVA5fPo6Yx6wjQdze2LL3uH');
- const BUSINESS_PUBLIC_KEY = new PublicKey('ABUdsXe6hAAz8J8raXpsuicwkyFJyZ6CHvccb6MpXDDh');
+ const EARP_TREASURY_PUBLIC_KEY = new PublicKey(idl.metadata.ear_treasury_pubkey);
+ const BUSINESS_PUBLIC_KEY = new PublicKey(idl.metadata.biz_pubkey);
 
  /**
   * Path to program files
@@ -403,6 +404,7 @@ async function getConfig(): Promise<any> {
     'cli',
     'config.yml',
   );
+  console.log("config path:"+CONFIG_FILE_PATH);
   const configYml = await fs.readFile(CONFIG_FILE_PATH, {encoding: 'utf8'});
   return yaml.parse(configYml);
 }
@@ -411,17 +413,19 @@ async function getConfig(): Promise<any> {
  * Load and parse the Solana CLI config file to determine which RPC url to use
  */
 export async function getRpcUrl(): Promise<string> {
-  try {
-    const config = await getConfig();
-    if (!config.json_rpc_url) throw new Error('Missing RPC URL');
-    console.log("json rpc url : "+config.json_rpc_url);
-    return config.json_rpc_url;
-  } catch (err) {
-    console.warn(
-      'Failed to read RPC url from CLI config file, falling back to localhost',
-    );
-    return 'http://localhost:8899';
-  }
+  // try {
+  //   const config = await getConfig();
+  //   if (!config.json_rpc_url) throw new Error('Missing RPC URL');
+  //   console.log("json rpc url : "+config.json_rpc_url);
+  //   return config.json_rpc_url;
+  // } catch (err) {
+  //   console.warn(
+  //     'Failed to read RPC url from CLI config file, falling back to localhost',
+  //   );
+  //   return 'http://localhost:8899';
+  // }
+
+  return rpcUrl;
 }
   
 /**

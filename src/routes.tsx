@@ -43,8 +43,8 @@ export function Routes() {
     <HashRouter basename={"/"}>
       <ConnectionProvider>
         <WalletProvider wallets={wallets} autoConnect>
-          <AccountsProvider>
-            <MarketProvider>
+          {/* <AccountsProvider> */}
+            {/* <MarketProvider> */}
               <AppLayout>
                 <Switch>
                   <Route exact path="/" component={() => <HomeView />} />
@@ -54,8 +54,9 @@ export function Routes() {
                   {/* <Route exact path="/anchortest" children={<AnchortestView />} /> */}
                 </Switch>
               </AppLayout>
-            </MarketProvider>
-          </AccountsProvider>
+              
+            {/* </MarketProvider> */}
+          {/* </AccountsProvider> */}
         </WalletProvider>
       </ConnectionProvider>
     </HashRouter>

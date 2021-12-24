@@ -44,9 +44,9 @@ We have some grand plans for this protocol
 
 You would need Node, React, Rust, Solana CLI and Anchor framework to get this going. Some browser-based Solana wallet is also required.
 After everything is installed, need to start 3 services
-- $ cd sear
+
 - $ solana-test-validator
-- $ node /sear/apis/index.js
+- $ node /sol_earp/apis/index.js
 - $ yarn 
 - $ yarn start
 
@@ -94,6 +94,7 @@ $ anchor build
 $ anchor deploy
 ```
 After the smart contarct has compiled, deploy it on the chain. 
+Replace the program-id (displayed after deploy) in anchor.toml, idl.json and respective smart contract (lib.rs)
 
 # Directory structure
 

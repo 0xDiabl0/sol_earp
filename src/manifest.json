@@ -1,6 +1,6 @@
 {
-  "name": "Solana $EAR",
-  "short_name": "$EARP",
+  "name": "EAR Protocol",
+  "short_name": "EAR",
   "display": "standalone",
   "start_url": "./",
   "theme_color": "#002140",

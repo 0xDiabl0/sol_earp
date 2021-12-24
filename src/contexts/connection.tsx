@@ -44,7 +44,7 @@ export const ENDPOINTS = [
   },
 ];
 
-const DEFAULT = ENDPOINTS[0].endpoint;
+const DEFAULT = ENDPOINTS[2].endpoint;
 const DEFAULT_SLIPPAGE = 0.25;
 
 interface ConnectionConfig {
@@ -74,7 +74,7 @@ const ConnectionContext = React.createContext<ConnectionConfig>({
 export function ConnectionProvider({ children = undefined as any }) {
   const [endpoint, setEndpoint] = useLocalStorageState(
     "connectionEndpts",
-    ENDPOINTS[0].endpoint
+    DEFAULT
   );
 
   const [slippage, setSlippage] = useLocalStorageState(
@@ -95,34 +95,34 @@ export function ConnectionProvider({ children = undefined as any }) {
 
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
   const [tokenMap, setTokenMap] = useState<Map<string, TokenInfo>>(new Map());
-  useEffect(() => {
-    cache.clear();
-    // fetch token files
-    (async () => {
-      const res = await new TokenListProvider().resolve();
-      const list = res
-        .filterByChainId(chain.chainID)
-        .excludeByTag("nft")
-        .getList();
-      const knownMints = list.reduce((map, item) => {
-        map.set(item.address, item);
-        return map;
-      }, new Map<string, TokenInfo>());
+  // useEffect(() => {
+  //   cache.clear();
+  //   // fetch token files
+  //   (async () => {
+  //     const res = await new TokenListProvider().resolve();
+  //     const list = res
+  //       .filterByChainId(chain.chainID)
+  //       .excludeByTag("nft")
+  //       .getList();
+  //     const knownMints = list.reduce((map, item) => {
+  //       map.set(item.address, item);
+  //       return map;
+  //     }, new Map<string, TokenInfo>());
 
-      const accounts = await getMultipleAccounts(connection, [...knownMints.keys()], 'single');
-      accounts.keys.forEach((key, index) => {
-        const account = accounts.array[index];
-        if(!account) {
-          return;
-        }
+  //     const accounts = await getMultipleAccounts(connection, [...knownMints.keys()], 'single');
+  //     accounts.keys.forEach((key, index) => {
+  //       const account = accounts.array[index];
+  //       if(!account) {
+  //         return;
+  //       }
 
-        cache.add(new PublicKey(key), account, MintParser);
-      })
+  //       cache.add(new PublicKey(key), account);//, MintParser);
+  //     })
 
-      setTokenMap(knownMints);
-      setTokens(list);
-    })();
-  }, [connection, chain]);
+  //     setTokenMap(knownMints);
+  //     setTokens(list);
+  //   })();
+  // }, [connection, chain]);
 
   setProgramIds(env);
 
@@ -169,6 +169,7 @@ export function ConnectionProvider({ children = undefined as any }) {
         setSlippage: (val) => setSlippage(val.toString()),
         connection,
         sendConnection,
+        
         tokens,
         tokenMap,
         env,

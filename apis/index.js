@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-const KEYPAIR_PATH = path.resolve(__dirname, '../../my_wallet/localnet');
+const KEYPAIR_PATH = path.resolve(__dirname, '../wallet_solana/devnet');
 // const PROGRAM_KEYPAIR_PATH = path.resolve(__dirname, '../program/target/deploy');
 const PROGRAM_KEYPAIR_PATH = path.resolve(__dirname, '../anchorapp/target/deploy');
 
