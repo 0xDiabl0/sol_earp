@@ -1,0 +1,18 @@
+[package]
+name = "publishincentive"
+version = "0.1.0"
+description = "Pushing incentive to Chain"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "publishincentive"
+
+[features]
+no-entrypoint = []
+no-idl = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.17.0"
