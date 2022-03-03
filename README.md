@@ -8,18 +8,6 @@ Through EAR protocol, developers promise some regular income stream for their ea
 Early users get to use these products but also collect their recurring revenue via EAR.
 The protocol allows this trustless contract between business/developer and early user through smart-contracts.
 
-# Use-cases
-
-Some of the use-case that could become prominent :
-- EAR can be a new acquisition channel for established brands when they launch new products. Eg. Nike when launching new line of shoes could attract crypto community through EAR
-- EAR can be a funding mechanism where new businesses get bootstrapped by early users. Users are the best investors - made true by EAR
-- EAR can be a great bridge between the real world and Web3. Local stores can allocate some % of their ad spends (to Goog/FB) to EAR rewards. A hyper local app could let users know of such offers in their locality.
-- EAR allows free-lance developers to easily get engagement+momentum. Normally developers are not great at business. EAR attracts users for them.When products are launched with EAR, the trustless smart contracts attract early adopters who can spur growth for new services.
-
-# Team
-
-We are a bunch of seasoned software professionals who have worked with large organisations like Google. In the past, we used to run a funded SaaS startup - Moxiter. 
-Idea of rewarding ealy-adopters have been brewing in our heads since then. With blockchain, we can finally do it.
 
 # Product
 
