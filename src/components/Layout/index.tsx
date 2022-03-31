@@ -17,7 +17,7 @@ export const AppLayout = React.memo(({ children }) => {
           <Header className="App-Bar">
             <Link to="/">
               <div className="app-title">
-                <h2>Solana $EAR</h2>
+                <h2>EAR Protocol</h2>
               </div>
             </Link>
             <AppBar />

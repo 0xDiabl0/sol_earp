@@ -21,7 +21,7 @@ export const AppBar = (props: { left?: JSX.Element; right?: JSX.Element }) => {
       </div>
       <div className="barcta">
         <Link to="/seller">
-          <Button>Seller</Button>
+          <Button>Business</Button>
         </Link>
       </div>
       

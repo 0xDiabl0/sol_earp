@@ -116,3 +116,28 @@ export class tWallet extends NodeWallet {
     return pk;
   }
 }
+
+
+/**
+ * Returns the PDA details for a given business wallet 
+ * This PDA will be used to store incentive on-chain
+ * TODO : Use this function
+ * @param businessWallet 
+ * @returns 
+ */
+ export async function getPDAforIncentiveProgram(businessWallet : PublicKey, programId : PublicKey) {
+  
+  let accountPDA;
+
+  if (!businessWallet) 
+    throw new Error("business wallet is null");
+
+  // let publicKeyStr = listingKeypair.publicKey.toBase58().substr(0,32);
+  // let greetedPubSeed = Buffer.from(publicKeyStr, 'utf8');
+
+  let pdaSeed = Buffer.from(businessWallet.toBase58(), 'utf8');
+  
+  accountPDA = await PublicKey.findProgramAddress([pdaSeed], programId);
+
+  return accountPDA;
+}

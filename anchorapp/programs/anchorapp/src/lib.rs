@@ -6,13 +6,13 @@ declare_id!("2wvgLFRzyCj7hgGK194omXopF5g9C5JzFYo4fLgpocsY");
 pub mod anchorapp {
     use super::*;
 
-    const PDA_SEED: &[u8] = b"registry";
+    // const PDA_SEED: &[u8] = b"registry";
 
     pub fn initialize(ctx: Context<Initialize>, base_account_bump: u8) -> ProgramResult {
         ctx.accounts.base_account.bump = base_account_bump;
 
-        let (vault_authority, _vault_authority_bump) =
-            Pubkey::find_program_address(&[PDA_SEED], ctx.program_id);
+        // let (vault_authority, _vault_authority_bump) =
+        //     Pubkey::find_program_address(&[PDA_SEED], ctx.program_id);
 
         Ok(())
     }

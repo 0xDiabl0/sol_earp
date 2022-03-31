@@ -1,12 +1,15 @@
 [programs.localnet]
 anchorapp = "2wvgLFRzyCj7hgGK194omXopF5g9C5JzFYo4fLgpocsY"
+publishincentive = "pvr1XUXRXAzddCecgyvMxb88NZsAXh69d4uRdsyc1Kf"
+disbursereward = "ATsznkhxzb6yaGpLGNYeVtkhCaWtJysbDv4NwzAkRnsf"
+vault = "DwRPVvFn8a2AqXv8skZxJRp2PRrUqEq9mDzJ7CBaBqKo"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "devnet"
-wallet = "/Volumes/samsung1TB/web3/sol_earp/wallet_solana/devnet/devnet_auth.json"
+cluster = "localnet"
+wallet = "/Users/ashu/.config/solana/devnet.json"
 
 [scripts]
 test = "mocha -t 1000000 tests/"
