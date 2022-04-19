@@ -1908,10 +1908,10 @@
   dependencies:
     buffer "~6.0.3"
 
-"@solana/spl-token-registry@^0.2.279":
-  version "0.2.1064"
-  resolved "https://registry.yarnpkg.com/@solana/spl-token-registry/-/spl-token-registry-0.2.1064.tgz#53b62140660854d873fa586e84668a8484ad80d1"
-  integrity sha512-rMH8lqVAfc7sKfdTFfd6OoeGLHzhWXPC/yMH+WpTNi4WbALt9i4P3aS9PSevTOmqnFvtvcmtiE+OZiLdHb4aEQ==
+"@solana/spl-token-registry@^0.2.3498":
+  version "0.2.3498"
+  resolved "https://registry.yarnpkg.com/@solana/spl-token-registry/-/spl-token-registry-0.2.3498.tgz#2e44976ecfc390b08d1c53c9051878ebd0502243"
+  integrity sha512-xgB3lqKaA1kZykPhz7w7PN2evtqDxL7RO1k38rrOJ3KuZ2yNYlmXwCUCj0QQdmNOg/m5XnHVyHMuf6PTX4NlhA==
   dependencies:
     cross-fetch "3.0.6"
 
