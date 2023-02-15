@@ -8,7 +8,7 @@ authors = ["0xDiablo <oxdiablo.crypto@gmail.com>"]
 
 [dependencies]
 borsh = "0.9.1"
-borsh-derive = "0.9.1"
+borsh-derive = "0.10.2"
 solana-program = "=1.7.9"
 solana-validator = { version = "1.7.9", optional = true }
 
